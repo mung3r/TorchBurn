@@ -57,7 +57,7 @@ public class TorchBurn extends JavaPlugin {
 		}
 		else {
 			// last torch
-			player.getInventory().removeItem(player.getInventory().getItem(slot));
+			player.getInventory().clear(slot);
 		}
 		removePlayerLoc(player);
 		if ( playerBlocks.containsKey(player) ) {
@@ -166,7 +166,7 @@ public class TorchBurn extends JavaPlugin {
 						// this is fast
 						newIntensity = (intensity-(Math.abs(x)+Math.abs(y)+Math.abs(z))) < 0 ? 0 : intensity-(Math.abs(x)+Math.abs(y)+Math.abs(z));
 					}
-					else {
+					else {	
 						// this is slow, but nicer
 						Vector origin = new Vector(blockX, blockY, blockZ);
 						Vector v = new Vector(blockX+x, blockY+y, blockZ+z);
