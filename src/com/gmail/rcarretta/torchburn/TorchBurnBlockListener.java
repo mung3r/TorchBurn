@@ -6,9 +6,13 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 
 class TorchBurnBlockListener extends BlockListener {
+	private final TorchBurn plugin;
+	protected TorchBurnBlockListener(final TorchBurn plugin) {
+		this.plugin = plugin;
+	}
 	@Override
 	public void onBlockPlace (BlockPlaceEvent event) {
-		if ( TorchBurn.isLit(event.getPlayer()) && event.getItemInHand().getType() == Material.TORCH )
+		if ( plugin.isLit(event.getPlayer()) && event.getItemInHand().getType() == Material.TORCH )
 			event.setCancelled(true);
 	}
 }

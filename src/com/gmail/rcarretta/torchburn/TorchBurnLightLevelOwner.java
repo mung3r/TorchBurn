@@ -2,7 +2,7 @@ package com.gmail.rcarretta.torchburn;
 
 import org.bukkit.entity.Player;
 
-public class TorchBurnLightLevelOwner {
+class TorchBurnLightLevelOwner {
 	private Player owner;
 	private Integer level;
 	
@@ -11,6 +11,6 @@ public class TorchBurnLightLevelOwner {
 		level = newLevel;
 	}
 	
-	public Player getPlayer() { return owner; }
-	public Integer getLevel() { return level; }
+	protected Player getPlayer() { return owner; }
+	protected Integer getLevel() { return level; }
 }

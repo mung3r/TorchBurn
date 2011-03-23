@@ -14,14 +14,18 @@ import org.bukkit.util.Vector;
 import org.bukkit.Location;
 
 public class TorchBurn extends JavaPlugin {
-	protected static TorchBurn myPlugin;
-	protected static int intensity = 15;
-	protected static int falloff = 3;
-	private static boolean slowServer = true;
-	
-	private final TorchBurnPlayerListener playerListener = new TorchBurnPlayerListener();
-	private final TorchBurnEntityListener entityListener = new TorchBurnEntityListener();
-	private final TorchBurnBlockListener blockListener = new TorchBurnBlockListener();
+	private int intensity = 15;
+	private int falloff = 3;
+	private int duration = 120;
+	private boolean requireSneaking = true;
+	private boolean allowUnderwater = false;
+	private boolean setFire = false;
+	private boolean fastServer = false;
+
+	private final TorchBurnPlayerListener playerListener = new TorchBurnPlayerListener(this);
+	private final TorchBurnEntityListener entityListener = new TorchBurnEntityListener(this);
+	private final TorchBurnBlockListener blockListener = new TorchBurnBlockListener(this);
+	private final TorchBurnConfig config = new TorchBurnConfig(this);
 	
 	// used to reduce calls to lightArea(), instead of on every playermove, only when block changes.
 	private static HashMap<Player, TorchBurnSimplePlayerLoc> playerLoc = new HashMap<Player, TorchBurnSimplePlayerLoc>();
@@ -31,8 +35,8 @@ public class TorchBurn extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
+		config.configRead();
 		PluginManager pm = getServer().getPluginManager();
-		myPlugin = this;
 		pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
@@ -48,7 +52,7 @@ public class TorchBurn extends JavaPlugin {
 		
 	}
 	
-	public static void extinguish ( Player player, int slot ) {
+	protected void extinguish ( Player player, int slot ) {
 		// remove torches, restore light, etc.
 		if ( player.getInventory().getItem(slot).getAmount() > 1 ) {
 			// decrement stack
@@ -67,7 +71,7 @@ public class TorchBurn extends JavaPlugin {
 	}
 	
 	// i am so lazy
-	public static void extinguishNoRemove ( Player player ) {
+	protected void extinguishNoRemove ( Player player ) {
 		int slot = player.getInventory().getHeldItemSlot();
 		// remove torches, restore light, etc.
 		if ( player.getInventory().getItemInHand().getAmount() > 1 ) {
@@ -76,7 +80,7 @@ public class TorchBurn extends JavaPlugin {
 		}
 		else {
 			// last torch
-			player.getInventory().removeItem(player.getInventory().getItem(slot));
+			player.getInventory().clear(slot);
 		}
 		removePlayerLoc(player);
 		if ( playerBlocks.containsKey(player) ) {
@@ -85,7 +89,7 @@ public class TorchBurn extends JavaPlugin {
 		}
 	}
 	
-	public static void extinguish ( Player player ) {
+	protected void extinguish ( Player player ) {
 		int slot = player.getInventory().getHeldItemSlot();
 		// remove torches, restore light, etc.
 		if ( player.getInventory().getItemInHand().getAmount() > 1 ) {
@@ -95,7 +99,7 @@ public class TorchBurn extends JavaPlugin {
 		}
 		else {
 			// last torch
-			player.getInventory().removeItem(player.getInventory().getItem(slot));
+			player.getInventory().clear(slot);
 		}
 		removePlayerLoc(player);
 		if ( playerBlocks.containsKey(player) ) {
@@ -104,7 +108,37 @@ public class TorchBurn extends JavaPlugin {
 		}
 	}
 	
-	public static boolean updatePlayerLoc (Player player) {
+	protected int getDuration() { return duration; }
+	protected int getIntensity() { return intensity; }
+	protected int getFalloff() { return falloff; }
+	protected boolean getRequireSneaking() { return requireSneaking; }
+	protected boolean getAllowUnderwater() { return allowUnderwater; }
+	protected boolean getSetFire() { return setFire; }
+	protected boolean getFastServer() { return fastServer; } 
+	
+	protected void setBurnDuration(int newDuration) {
+		this.duration = newDuration;
+	}
+	protected void setLightIntensity(int newIntensity) {
+		this.intensity = newIntensity;
+	}
+	protected void setLightFalloff(int newFalloff) {
+		this.falloff = newFalloff;
+	}
+	protected void setRequireSneaking(boolean newRequireSneaking) {
+		this.requireSneaking = newRequireSneaking;
+	}
+	protected void setAllowUnderwater(boolean newAllowUnderwater) {
+		this.allowUnderwater = newAllowUnderwater;
+	}
+	protected void setSetFire(boolean newSetFire) {
+		this.setFire = newSetFire;
+	}
+	protected void setFastServer(boolean newFastServer) {
+		this.fastServer = newFastServer;
+	}
+	
+	protected boolean updatePlayerLoc (Player player) {
 		Location loc = player.getLocation();
 		TorchBurnSimplePlayerLoc tbLoc = playerLoc.get(player);
 		
@@ -118,26 +152,27 @@ public class TorchBurn extends JavaPlugin {
 		return true;
 	}
 	
-	public static boolean isLit (Player player) {
+	protected boolean isLit (Player player) {
 		return ( playerLoc.containsKey(player) );
 	}
 	
-	public static void addPlayerLoc (Player player) {
+	private void addPlayerLoc (Player player) {
 		Location loc = player.getLocation();
 		playerLoc.put(player, new TorchBurnSimplePlayerLoc(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
 	}
 	
-	public static void removePlayerLoc (Player player) {
+	private void removePlayerLoc (Player player) {
 		playerLoc.remove(player);
 	}
 	
-	public static void lightTorch ( Player player ) {
+	protected void lightTorch ( Player player ) {
 		lightArea(player, intensity, falloff);
 		addPlayerLoc(player);
-		myPlugin.getServer().getScheduler().scheduleSyncDelayedTask(myPlugin, new TorchBurnSchedule(player), 0);
+		if (getDuration() > 0)
+			getServer().getScheduler().scheduleSyncDelayedTask(this, new TorchBurnSchedule(this, player), 0);
 	}
 	
-	public static void lightArea ( Player player, int intensity, int falloff ) {
+	protected void lightArea ( Player player, int intensity, int falloff ) {
 		assert ( intensity >= 0 );
 		assert ( intensity <= 15 );
 		assert ( falloff > 0 );
@@ -162,7 +197,7 @@ public class TorchBurn extends JavaPlugin {
 					int newIntensity;
 					int curIntensity = world.getHandle().j(blockX+x, blockY+y, blockZ+z);
 					
-					if ( slowServer == true ) {
+					if ( fastServer == false ) {
 						// this is fast
 						newIntensity = (intensity-(Math.abs(x)+Math.abs(y)+Math.abs(z))) < 0 ? 0 : intensity-(Math.abs(x)+Math.abs(y)+Math.abs(z));
 					}
@@ -208,7 +243,7 @@ public class TorchBurn extends JavaPlugin {
 		playerBlocks.put(player, blockList);
 	}
 
-	public static void unLightarea ( Player player ) {
+	private void unLightarea ( Player player ) {
 		TorchBurnLightLevelOwner lightLevelOwner;
 		for ( Location l : playerBlocks.get(player) ) {
 			lightLevelOwner = prevState.get(l);

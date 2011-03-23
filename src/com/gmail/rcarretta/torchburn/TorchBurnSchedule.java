@@ -6,20 +6,24 @@ import org.bukkit.entity.Player;
 
 class TorchBurnSchedule implements Runnable {
 	Player player;
+	private final TorchBurn plugin;
 	
-	TorchBurnSchedule(Player newPlayer) { this.player = newPlayer; }
+	protected TorchBurnSchedule(final TorchBurn plugin, Player newPlayer) { 
+		this.plugin = plugin;
+		this.player = newPlayer;
+	}
 	
 	@Override
 	public void run() {
-		if ( TorchBurn.isLit(player) ) {
+		if ( plugin.isLit(player) ) {
 			if ( player.getInventory().getItemInHand().getType() == Material.TORCH ) {
 				player.getInventory().getItemInHand().setDurability((short)(player.getInventory().getItemInHand().getDurability()+1));
 				if ( player.getInventory().getItemInHand().getDurability() >= 32 ) {
-					TorchBurn.extinguish(player);
+					plugin.extinguish(player);
 					// remove the torch from the player's inventory and return light levels
 				}
 				else {
-					TorchBurn.myPlugin.getServer().getScheduler().scheduleSyncDelayedTask(TorchBurn.myPlugin, new TorchBurnSchedule(player), 40);
+					plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new TorchBurnSchedule(plugin, player), (int)(plugin.getDuration()*20/32));
 				} 	
 			}
 		}
