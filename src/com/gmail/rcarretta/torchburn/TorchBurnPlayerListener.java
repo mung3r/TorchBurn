@@ -2,12 +2,13 @@ package com.gmail.rcarretta.torchburn;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerItemEvent;
-import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.PlayerInventory;
 
 
@@ -57,8 +58,11 @@ class TorchBurnPlayerListener extends PlayerListener {
 	}
 		
 	@Override
-	public void onPlayerItem (PlayerItemEvent event) {
+	public void onPlayerInteract (PlayerInteractEvent event) {
 		// check if a torch to light
+		if ( event.getAction() != Action.RIGHT_CLICK_AIR )
+			return;
+		
 		if ( plugin.isLit(event.getPlayer()) ) {
 			// player already has lit torch
 			return;
@@ -77,7 +81,7 @@ class TorchBurnPlayerListener extends PlayerListener {
 	}
 		
 	@Override
-	public void onPlayerQuit (PlayerEvent event) {
+	public void onPlayerQuit (PlayerQuitEvent event) {
 		if ( plugin.isLit(event.getPlayer()) ) {
 			plugin.extinguish(event.getPlayer());
 		}
