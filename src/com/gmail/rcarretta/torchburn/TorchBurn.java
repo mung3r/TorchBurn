@@ -195,7 +195,7 @@ public class TorchBurn extends JavaPlugin {
 			for ( int y = -radius; y <= radius; y++ )
 				for ( int z = -radius; z <= radius; z++ ) {
 					int newIntensity;
-					int curIntensity = world.getHandle().j(blockX+x, blockY+y, blockZ+z);
+					int curIntensity = world.getHandle().getLightLevel(blockX+x, blockY+y, blockZ+z);
 					
 					if ( fastServer == false ) {
 						// this is fast
@@ -218,7 +218,7 @@ public class TorchBurn extends JavaPlugin {
 					TorchBurnLightLevelOwner prevIntensity;
 					Location l = new Location(world, blockX+x, blockY+y, blockZ+z);
 					prevIntensity = TorchBurn.prevState.get(l);
-					int worldIntensity = world.getHandle().j(blockX+x, blockY+y, blockZ+z);
+					int worldIntensity = world.getHandle().getLightLevel(blockX+x, blockY+y, blockZ+z);
 					if ( prevIntensity != null ) {
 						// this area was in the map already. see if we are brightening and if it belongs to us
 						if ( prevIntensity.getLevel() < newIntensity && !(prevIntensity.getPlayer().equals(player))) {
@@ -229,7 +229,7 @@ public class TorchBurn extends JavaPlugin {
 					}
 					else {
 						// add the current world's light level to the map
-						TorchBurn.prevState.put(l, new TorchBurnLightLevelOwner(player, world.getHandle().j(blockX+x, blockY+y, blockZ+z)));
+						TorchBurn.prevState.put(l, new TorchBurnLightLevelOwner(player, world.getHandle().getLightLevel(blockX+x, blockY+y, blockZ+z)));
 					}
 					// light 'em up! 
 					if ( newIntensity > worldIntensity ) {
