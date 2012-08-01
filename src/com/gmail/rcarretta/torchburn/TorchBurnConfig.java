@@ -2,13 +2,16 @@ package com.gmail.rcarretta.torchburn;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 class TorchBurnConfig {
-	private final String configDirectory = "plugins/TorchBurn";
-	private final String configFileName = "TorchBurn.config";
+	private static final String UTF8 = "UTF-8";
+    private static final String configDirectory = "plugins/TorchBurn";
+	private static final String configFileName = "TorchBurn.config";
 	private final TorchBurn plugin;
 	
 	protected TorchBurnConfig(final TorchBurn plugin) {
@@ -29,8 +32,8 @@ class TorchBurnConfig {
 			}
 			
 			System.out.println("Reading TorchBurn configuration.");
-			FileReader fr = new FileReader(configDirectory + "/" + configFileName);
-			BufferedReader br = new BufferedReader(fr);
+			FileInputStream fr = new FileInputStream(configDirectory + "/" + configFileName);
+			BufferedReader br = new BufferedReader(new InputStreamReader(fr, UTF8));
 			String line = br.readLine();
 			while (line != null) {
 				// read BurnDuration, LightIntensity, LightFalloff, RequireSneaking, AllowUnderwater, SetFire, FastServer
@@ -130,8 +133,8 @@ class TorchBurnConfig {
 	protected void configWrite () {
 		System.out.println("Writing TorchBurn configuration.");
 		try {
-			FileWriter fw = new FileWriter(configDirectory + "/" + configFileName);
-			BufferedWriter bw = new BufferedWriter(fw);
+		    FileOutputStream fw = new FileOutputStream(configDirectory + "/" + configFileName);
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fw, UTF8));
 			// write BurnDuration, LightIntensity, LightFalloff, RequireSneaking, AllowUnderwater, SetFire, FastServer
 			bw.write("BurnDuration=" + plugin.getDuration() + "\n");
 			bw.write("LightIntensity=" + plugin.getIntensity() + "\n");

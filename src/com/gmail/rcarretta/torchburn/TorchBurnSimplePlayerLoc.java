@@ -14,7 +14,7 @@ class TorchBurnSimplePlayerLoc {
 	}
 	
 	protected boolean equals (Location loc) {
-		return (loc.getBlockX() == x && loc.getBlockY() == y & loc.getBlockZ() == z);
+		return (loc.getBlockX() == x && loc.getBlockY() == y && loc.getBlockZ() == z);
 	}
 	
 	protected void set(Location loc) {
