@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.ArrayList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.event.Event;
-import org.bukkit.event.Event.Priority;
 import org.bukkit.entity.Player;
 import org.bukkit.craftbukkit.CraftWorld;
 import net.minecraft.server.EnumSkyBlock;
@@ -37,14 +35,9 @@ public class TorchBurn extends JavaPlugin {
 	public void onEnable() {
 		config.configRead();
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLAYER_ITEM_HELD, playerListener, Priority.Highest, this);
-		pm.registerEvent(Event.Type.PLAYER_DROP_ITEM, playerListener, Priority.Highest, this);
-		pm.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.BLOCK_PLACE, blockListener, Priority.Normal, this);
+		pm.registerEvents(playerListener, this);
+		pm.registerEvents(entityListener, this);
+		pm.registerEvents(blockListener, this);
 	}
 	
 	@Override
@@ -235,7 +228,7 @@ public class TorchBurn extends JavaPlugin {
 					if ( newIntensity > worldIntensity ) {
 //						if my pull request to bukkit gets accepted
 //						l.getBlock().setLightLevel(newIntensity);
-						world.getHandle().b(EnumSkyBlock.BLOCK, blockX+x, blockY+y, blockZ+z, newIntensity);
+						world.getHandle().a(EnumSkyBlock.BLOCK, blockX+x, blockY+y, blockZ+z, newIntensity);
 					}
 					
 					blockList.add(l);
@@ -251,7 +244,7 @@ public class TorchBurn extends JavaPlugin {
 				if ( lightLevelOwner.getPlayer().equals(player)) {
 // this is if my pull request to bukkit gets accepted
 //					l.getBlock().setLightLevel(lightLevelOwner.getLevel());
-					((CraftWorld)(player.getWorld())).getHandle().b(EnumSkyBlock.BLOCK, l.getBlockX(), l.getBlockY(), l.getBlockZ(), lightLevelOwner.getLevel());
+					((CraftWorld)(player.getWorld())).getHandle().a(EnumSkyBlock.BLOCK, l.getBlockX(), l.getBlockY(), l.getBlockZ(), lightLevelOwner.getLevel());
 					prevState.remove(l);
 				}
 			}

@@ -1,18 +1,19 @@
 package com.gmail.rcarretta.torchburn;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityListener;
 
 
-class TorchBurnEntityListener extends EntityListener {
+class TorchBurnEntityListener implements Listener {
 	private final TorchBurn plugin;
 	
 	protected TorchBurnEntityListener(final TorchBurn plugin) {
 		this.plugin = plugin;
 	}
-	@Override
+	@EventHandler
 	public void onEntityDeath (EntityDeathEvent event) {
 		if ( event.getEntity() instanceof Player ) {
 			if ( plugin.isLit((Player)event.getEntity())) {
@@ -22,6 +23,7 @@ class TorchBurnEntityListener extends EntityListener {
 		}
 	}
 
+	@EventHandler
 	public void onEntityDamageByEntity (EntityDamageByEntityEvent event) {
 		if ( event.getDamager() instanceof Player) {
 			if (plugin.getSetFire()) {

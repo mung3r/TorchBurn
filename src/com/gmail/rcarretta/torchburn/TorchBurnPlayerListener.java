@@ -2,8 +2,9 @@ package com.gmail.rcarretta.torchburn;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
@@ -12,14 +13,14 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.PlayerInventory;
 
 
-class TorchBurnPlayerListener extends PlayerListener {
+class TorchBurnPlayerListener implements Listener {
 	private final TorchBurn plugin;
 	
 	protected TorchBurnPlayerListener(final TorchBurn plugin) {
 		this.plugin = plugin;
 	}
 	
-	@Override
+	@EventHandler
 	public void onPlayerMove (PlayerMoveEvent event) {
 			Player player = event.getPlayer();
 
@@ -34,14 +35,14 @@ class TorchBurnPlayerListener extends PlayerListener {
 			}
 	}
 		
-	@Override
+	@EventHandler
 	public void onItemHeldChange (PlayerItemHeldEvent event) {
 		if ( plugin.isLit(event.getPlayer())) {
 			plugin.extinguish(event.getPlayer(), event.getPreviousSlot());
 		}
 	}
 
-	@Override
+	@EventHandler
 	public void onPlayerDropItem (PlayerDropItemEvent event) {
 		if ( plugin.isLit(event.getPlayer())) {
 			if ( event.getItemDrop().getItemStack().getType() == Material.TORCH ) {
@@ -57,7 +58,7 @@ class TorchBurnPlayerListener extends PlayerListener {
 		}
 	}
 		
-	@Override
+	@EventHandler
 	public void onPlayerInteract (PlayerInteractEvent event) {
 		// check if a torch to light
 		if ( event.getAction() != Action.RIGHT_CLICK_AIR )
@@ -80,7 +81,7 @@ class TorchBurnPlayerListener extends PlayerListener {
 		}
 	}
 		
-	@Override
+	@EventHandler
 	public void onPlayerQuit (PlayerQuitEvent event) {
 		if ( plugin.isLit(event.getPlayer()) ) {
 			plugin.extinguish(event.getPlayer());
