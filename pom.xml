@@ -26,13 +26,11 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <build>
+    <defaultGoal>clean install</defaultGoal>
     <resources>
       <resource>
-        <directory>${project.basedir}/src</directory>
+        <directory>src/main/resources</directory>
         <filtering>true</filtering>
-        <includes>
-          <include>plugin.yml</include>
-        </includes>
       </resource>
     </resources>
     <plugins>
@@ -44,25 +42,6 @@
           <source>1.6</source>
           <target>1.6</target>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.5</version>
-        <executions>
-          <execution>
-            <id>add-source</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${project.basedir}/src</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
