@@ -28,10 +28,10 @@
   <build>
     <resources>
       <resource>
-        <directory>${project.basedir}</directory>
+        <directory>${project.basedir}/src</directory>
         <filtering>true</filtering>
         <includes>
-          <include>src/plugin.yml</include>
+          <include>plugin.yml</include>
         </includes>
       </resource>
     </resources>
