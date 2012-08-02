@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 
 class TorchBurnEntityListener implements Listener {
@@ -14,12 +15,10 @@ class TorchBurnEntityListener implements Listener {
 		this.plugin = plugin;
 	}
 	@EventHandler
-	public void onEntityDeath (EntityDeathEvent event) {
-		if ( event.getEntity() instanceof Player ) {
-			if ( plugin.isLit((Player)event.getEntity())) {
-				System.out.println("player death");
-					plugin.extinguish((Player)event.getEntity());
-			}
+	public void onEntityDeath (PlayerDeathEvent event) {
+		if ( plugin.isLit(event.getEntity())) {
+			System.out.println("player death");
+				plugin.extinguish(event.getEntity());
 		}
 	}
 
