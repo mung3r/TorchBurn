@@ -3,3 +3,8 @@ description: A Minecraft plugin to allow held torches to emit light.
 author: RCarretta
 main: com.gmail.rcarretta.torchburn.TorchBurn
 version: 1.2-b${BUILD_NUMBER}
+softdepend: [Vault]
+permissions:
+  torchburn.light:
+    description: Players are allowed to use torches
+    default: op
